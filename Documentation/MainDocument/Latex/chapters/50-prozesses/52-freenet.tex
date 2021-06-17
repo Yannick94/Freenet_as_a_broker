@@ -1,0 +1,259 @@
+\chapter{Freenet}
+\section{FCPv2 protocol}
+Freenet uses a simple, text-based protocol called FCPv2 (Freenet Client Protocol) to allow third-party applications to interact with Freenet. \newline
+Functionalities supported by the FCPv2 Protocol are:\cite{FCP}
+\begin{itemize}
+    \item Inserting of data into Freenet
+    \item Retrieval of data from Freenet
+    \item Querying the status of Freenet
+    \item Managing the other Freenet nodes that are connected to your own node.
+\end{itemize}
+\newpage
+\subsection{ClientHello}
+The first message sent from the third-party client to the node on a given connection is always the ClientHello message. No other messages are allowed to be sent to the node before the ClientHello is sent. The node will always respond with a NodeHello message.
+\begin{verbatim}
+    ClientHello
+    Name=My Freenet Client
+    ExpectedVersion=2.0
+    EndMessage
+\end{verbatim}
+\begin{tabularx}{\textwidth}{p{3cm}|p{2cm}|p{2.5cm}|p{5.5cm}}
+\toprule
+    Field & Possible values & Mandatory? & Description \\
+\midrule 
+Name & Arbitrary string, on one line & yes & A name to uniquely identify the client to the node. \\
+\addlinespace
+\hline
+\addlinespace
+ExpectedVersion & 2.0 & yes & The version of FCP to expect. In this case it will always be 2.0 \\
+\bottomrule
+\end{tabularx}
+\newpage
+\subsection{NodeHello}
+The NodeHello message is the reply a node sends after receiving a ClientHello message from a client.
+\begin{verbatim}
+    NodeHello
+    CompressionCodecs=4 - GZIP(0), BZIP2(1), LZMA(2), LZMA_NEW(3)
+    Revision=build01475
+    Testnet=false
+    Version=Fred,0.7,1.0,1475
+    Build=1475
+    ConnectionIdentifier=6f467be43d838f8e02877e7f176a73bd
+    Node=Fred
+    ExtBuild=29
+    FCPVersion=2.0
+    NodeLanguage=ENGLISH
+    ExtRevision=v29
+    EndMessage
+\end{verbatim}
+\begin{tabularx}{\textwidth}{p{3cm}|p{3cm}|p{7.5cm}}
+\toprule
+    Field & Example or [range] & Description \\
+\midrule 
+FCPVersion & 2.0 &  The version of FCP being utilized for this connection. \\
+\addlinespace
+\hline
+\addlinespace
+Node & Fred & \\
+\addlinespace
+\hline
+\addlinespace
+Version & Fred, 0.7, 1.0, 1475 & A comma-delimited list consisting of 
+\begin{itemize}
+    \item node name
+    \item node version
+    \item protocol version
+    \item build number
+\end{itemize}\\
+\addlinespace
+\hline
+\addlinespace
+Build & 1475 & \\
+\addlinespace
+\hline
+\addlinespace
+Revision & build01475 & \\
+\addlinespace
+\hline
+\addlinespace
+ExtBuild & 29 & The build of freenet-ext.jar being utilized by the node.\\
+\addlinespace
+\hline
+\addlinespace
+ExtRevision & v29 & The revision of freenet-ext.jar being utilized by the node.\\
+\addlinespace
+\hline
+\addlinespace
+Testnet & true, false & \\
+\addlinespace
+\hline
+\addlinespace
+Compression Codecs & 4 - GZIP(0), BZIP2(1), LZMA(2), LZMA_NEW(3) & A list of the compression codecs supported by the node.\\
+\addlinespace
+\hline
+\addlinespace
+Connection Identifier & 6f467be43d838f8 e02877e7f176a 73bd & A unique connection identifier, reported in hexadecimal format.\\
+\addlinespace
+\hline
+\addlinespace
+NodeLanguage & ENGLISH & The language currently utilized by the node.\\
+\bottomrule
+\end{tabularx}
+\subsection{ClientPut}
+The ClientPut message is used to specify an insert into Freenet of a single file. This file can be inserted by referring to a file on the disk, including the data directly in the message or redirecting to another key.
+\begin{verbatim}
+    ClientPut
+    URI=KSK@
+    Metadata.ContentType=text/plain
+    Identifier=My Test Insert
+    DataLength=4
+    Data
+    <Data>
+\end{verbatim}
+\begin{tabularx}{\textwidth}{p{3cm}|p{2cm}|p{2.5cm}|p{5.5cm}}
+\toprule
+    Field & Possible values & Mandatory? & Description \\
+\midrule 
+URI & CHK@ KSK@ SSK@ USK@ & yes & The type of key to insert. \\
+\addlinespace
+\hline
+\addlinespace
+Metadata. ContentType & Any MIME type & no & The MIME type of the data being inserted. \\
+\addlinespace
+\hline
+\addlinespace
+Identifier & Arbitrary text string & yes & This is just for client to be able to identify files that have been inserted. \\
+\addlinespace
+\hline
+\addlinespace
+DataLength & Integer from 0 to ? & yes & The length of the data file being included in this FCP message. \\
+\addlinespace
+\hline
+\addlinespace
+Data &  &  & Indicates the end of the message. The data follows this line. \\
+\bottomrule
+\end{tabularx}
+\newpage
+\subsection{ClientGet}
+The ClientGet message is used to specify a get of a single file from Freenet.
+\begin{verbatim}
+    ClientGet
+    URI=KSK@
+    Identifier=My Test Identifier
+    EndMessage
+\end{verbatim}
+\begin{tabularx}{\textwidth}{p{3cm}|p{2cm}|p{2.5cm}|p{5.5cm}}
+\toprule
+    Field & Possible values & Mandatory? & Description \\
+\midrule 
+URI & CHK@ KSK@ SSK@ USK@ & yes & The type of key to insert. \\
+\addlinespace
+\hline
+\addlinespace
+Identifier & Arbitrary text string & yes & This is just for client to be able to identify files that have been inserted. \\
+\bottomrule
+\end{tabularx}
+\newpage
+\subsection{DataFound}
+DataFound indicates a successful fetch of the key, but does not actually include the data.
+\begin{verbatim}
+    DataFound
+    Identifier=Request Number One
+    Metadata.ContentType=text/plain;charset=utf-8
+    DataLength=37261
+    EndMessage
+\end{verbatim}
+\begin{tabularx}{\textwidth}{p{3cm}|p{3cm}|p{7.5cm}}
+\toprule
+    Field & Example or [range] & Description \\
+\midrule 
+Identifier & Arbitrary text string & This is just for client to be able to identify files that have been inserted. \\
+\addlinespace
+\hline
+\addlinespace
+Metadata. ContentType & Any MIME type & The MIME type of the data being inserted. \\
+\addlinespace
+\hline
+\addlinespace
+DataLength & Integer from 0 to ? & The length of the data file being included in this FCP message. \\
+\bottomrule
+\end{tabularx}
+\newpage
+\subsection{AllData}
+AllData is a message from the node returning data from the node.
+\begin{verbatim}
+    AllData
+    Identifier=Request Number One
+    DataLength=37261 // length of data
+    StartupTime=1189683889
+    CompletionTime=1189683889
+    Metadata.ContentType=text/plain;charset=utf-8
+    Data
+     <37261 bytes of data>
+\end{verbatim}
+\begin{tabularx}{\textwidth}{p{3cm}|p{3cm}|p{7.5cm}}
+\toprule
+    Field & Example or [range] & Description \\
+\midrule 
+Identifier & Arbitrary text string & This is just for client to be able to identify files that have been inserted. \\
+\addlinespace
+\hline
+\addlinespace
+DataLength & Integer from 0 to ? & The length of the data file being included in this FCP message. \\
+\addlinespace
+\hline
+\addlinespace
+StartupTime & Time & The startup time of the GetRequest. \\
+\addlinespace
+\hline
+\addlinespace
+CompletionTime & Time & The completion time of the GetRequest. \\
+\addlinespace
+\hline
+\addlinespace
+Metadata. ContentType & Any MIME type & The MIME type of the data being inserted. \\
+\bottomrule
+\end{tabularx}
+\newpage
+\subsection{GenerateSSK}
+The GenerateSSK message is used to ask the node to generate us an SSK keypair. Response will come back in a SSKKeypair message.
+\begin{verbatim}
+    GenerateSSK
+    Identifier=My Identifier Blah Blah
+    EndMessage
+\end{verbatim}
+\begin{tabularx}{\textwidth}{p{3cm}|p{2cm}|p{2.5cm}|p{5.5cm}}
+\toprule
+    Field & Possible values & Mandatory? & Description \\
+\midrule 
+Identifier & Arbitrary text string & yes & This is just for client to be able to identify files that have been inserted. \\
+\bottomrule
+\end{tabularx}
+\newpage
+\subsection{SSKKeypair}
+Is a message sent from the Freenet node to a client program in response to the client issuing a GenerateSSK command.
+\begin{verbatim}
+    SSKKeypair
+    InsertURI=freenet:SSK@AKTTKG6YwjrHzWo67laRcoPqibyiTdyYufjVg54fBlWr,
+               AwUSJG5ZS-FDZTqnt6skTzhxQe08T-fbKXj8aEHZsXM/
+    RequestURI=freenet:SSK@BnHXXv3Fa43w~~iz1tNUd~cj4OpUuDjVouOWZ5XlpX0,
+               AwUSJG5ZS-FDZTqnt6skTzhxQe08T-fbKXj8aEHZsXM,AQABAAE/
+    Identifier=My Identifier from GenerateSSK
+    EndMessage
+\end{verbatim}
+\begin{tabularx}{\textwidth}{p{3cm}|p{3cm}|p{7.5cm}}
+\toprule
+    Field & Example or [range] & Description \\
+\midrule 
+InsertURI & inserting URI & Consists the URI needed to insert to freenet. \\
+\addlinespace
+\hline
+\addlinespace
+RequestURI & request URI & Consists the URI needed to request from freenet. \\
+\addlinespace
+\hline
+\addlinespace
+Identifier & Arbitrary text string & This is for the Client to Identify to witch GenerateSSK Request this Keypair is. \\
+\bottomrule
+\end{tabularx}
+\newpage

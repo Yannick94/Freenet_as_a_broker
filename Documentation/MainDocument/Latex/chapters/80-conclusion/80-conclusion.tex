@@ -1,0 +1,11 @@
+\chapter{Conclusion}
+The goal of this work was to analyze and develop a prototype that makes it possible to detach the communication of IoT data from the manufacturer of the devices. So that they no longer have to struggle with the problem of dependence on the manufacturer. 
+Based on this problem, a new communication path for the IoT data had to be developed. The goal was to exchange the data as anonymously and securely as possible. 
+In addition, unauthorized parties should be prevented from gaining access to the data or its information.
+In order to implement these goals, communication via Freenet was targeted. Freenet itself already stands for an anonymized decentralized network with which data can be exchanged. 
+However, since anyone who connects to my Freenet node can see this data, the data had to be additionally protected.
+For this an Elliptic Curve Diffie-Hellmann Key Exchange was executed. With this it was possible to transfer the data additionally in encrypted form.
+Even if with the work defined in this thesis and its prototypes it was shown that a communication of IoT data can be executed secured and anonymous over Freenet. Nevertheless, some further work is available. 
+The communication over Freenet is currently not very performant, here would be one of the biggest approaches for improvement. Additionally, the current prototype only supports communication between 2 parties at a time. Therefore, it is also possible to start here to enable multiparty usage. 
+These are only two of a few approaches that could lead to an improvement of the prototypes.
+During the implementation of this work, I was able to implement much of what I learned in theory in a practice-oriented prototype. In addition, my theoretical knowledge helped me a lot in creating the architecture of the new communication path. All in all, I was able to put a lot of what I had learned into practice in this prototype.

@@ -1,0 +1,11 @@
+\chapter{Problems}
+During the work on my bachelor thesis I stumbled more and more over single major as well as minor problems. 
+These are both in the creation of the prototype as well as in planning and the effort of the work in addition to the daily work.
+However, more problems have arisen during the creation of the prototype. Thus I had to determine with the wiring after several unsuccessful attempts, which the slots of the Arduino UNO Wifi Rev3 are not identical with the normal Arduino Uno. 
+\newline
+So that the cabling of the so-called ICSP ports that enable the control of the Micro SD Card Reader module via the instructions described in the Arduino Uno on the digital ports of 7-13 are present, so they are not connected to the digital ports on the Arduino Uno Wifi Rev3. In order to find out where to find these ports, I spent several hours studying the schematic of the chipset. Once I understood the schematic, I was able to connect the SD card module without any problems.
+\newline
+One problem that was identified during the development of the prototype is the roundtrip time. Since it is very important in medicine to always get the most current data in order to always know directly about the condition of the patient. Because of the using of a broker it came to the fact that we had an increased roundtrip time. We have now decided on a maximum roundtrip time of 10s for the prototype. Since this would probably be too much for a productive implementation, we would have to take care of this problem again.
+Another problem was the ECDH (Elliptic Curve Diffie-Hellmann) key exchange. Since I only found a C library for the Arduino, I had to use another library for the receiver, which is a C# application. 
+The use of these 2 different libraries leads however at first also to problems, since the Shared Secret computed at the end did not agree.
+Furthermore, the library for using the FCP protocol for "C" was outdated and no longer current, so I decided to combine the required messages in a separate small "library".

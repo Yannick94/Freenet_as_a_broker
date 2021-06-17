@@ -1,0 +1,35 @@
+\section{Send and receive data}
+Once the connection between a transmitter and a receiver is established, the two devices proceed to the next step. The IoT transmitter reads the required information from the SD card. It thus obtains the Freenet path of the receiver and the key for encrypting the data. 
+It then reads the data from the sensor. Formats it and encrypts it. The data is then uploaded in encrypted form from the IoT transmitter to the receiver's Freenet path.
+The receiver regularly checks whether new data has already been uploaded from the transmitter. If it detects that new data has been uploaded, it downloads it and verifies it. For this purpose, it decrypts the received data.  If the data has been downloaded correctly, the receiver sends the sender a confirmation that it has received the data via its Freenet path.
+\newline
+An IoT transmitter only sends the data if it has received confirmation of the previous upload of data, thus ensuring that the receiver is still active and therefore still receiving data.
+\newpage
+\section{Communication scheme}
+\begin{center}
+\rotatebox{90}{
+\scalebox{0.7}{
+\tcbox[top=0pt,left=0pt,right=0pt,bottom=0pt]{
+\pseudocodeblock{
+ \textbf{IoT sender} \< \< \textbf{Broker} \< \< \textbf{IoT receiver} \\[][\hline]
+ \text{Get stored Freenet path} \< \< \< \< \\
+ \text{Get shared secret} \< \< \< \< \\
+ \text{Encrypt information} \< \< \< \< \\
+ \< \sendmessageright{top=Upload info} \< \< \< \\
+ \< \<  \text{store info} \< \< \\
+ \< \sendmessageleft{top=Upload result} \< \< \< \\
+ \< \< \< \sendmessageright{top=Get info} \< \\ 
+ \< \< \< \< \text{Get shared secret} \\
+ \< \< \< \< \text{Decrypt information} \\
+  \< \< \< \< \text{Get stored Freenet path} \\
+ \< \< \< \< \text{Encrypt receive confirmation} \\
+ \< \< \< \sendmessageleft{top=Send receive confirmation} \< \\
+ \< \<  \text{store receive confirmation} \< \< \\
+ \< \sendmessageleft{top=get receive confirmation} \< \< \< \\
+ \text{Get shared secret} \< \< \< \< \\
+ \text{start over} \< \< \< \< \\
+}
+}
+}
+}
+\end{center}

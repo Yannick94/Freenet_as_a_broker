@@ -1,0 +1,17 @@
+\chapter{Attacks an Prevention}
+The following chapter describes various possible attack scenarios and the possible solutions to prevent them. 
+The following attacks are considered: 
+\begin{itemize}
+    \item{Spoffing of the data:}
+    \SubItem{The information stored on the broker can be manipulated by anyone who can connect to the Freenet Node and also has knowledge of the Freenet URIs. 
+To prevent this from happening, Freenet URIs must be exchanged in encrypted form for each new connection. }
+    \item{Interruption of the data flow by flooding Freenet:}
+        \SubItem{Freenet runs as a node on a device, the exact behavior of Freenet and the effects due to the high load need to be further investigated. (Packet loss and availability)  }
+    \item{Physical attack:}
+        \SubItem{There are several possible physical points of attack, one of which is the IoT transmitter. In our prototype, it is equipped with an SD card. Stored on it are all the information about the connections to the receivers. This data is stored on the SD card in encrypted form. However, the key for this encryption is stored on the EEPROM of the IoT transmitter. Furthermore, we have a Freenet node that is also physically located on site. If this is accessed, or if the permissions are not set correctly, a lot of information can be tapped here as well.}
+    \newpage
+    \item{Man in the Middle:}
+        \SubItem{The man in the middle attack is very heavy here due to the use of Freenet. Since here is the only point of attack for a Man in the Middle. There is, however, the possibility that an attacker could pretend to be the recipient of the sender's QR code and thus establish his own communication with the sender. To ensure that the QR code has not yet been read out for registration before it is used at the customer's premises, it is delivered as a scratch-off zone on a piece of paper. If the QR code has already been scratched off, it can be assumed that it has already been read out.}
+    \item{Shell injection:}
+        \SubItem{When creating the receiver software, the first attempt was made to use the same ECC library as for the transmitter. Since this is a C library, it was provided as a .dll. However, since the use of this DLL leads to a high risk of a shell incjection, it was decided to use a specific C\# library that performs the calculations of the elliptic curve and thus has a much lower risk of a shell injection.}
+\end{itemize}
