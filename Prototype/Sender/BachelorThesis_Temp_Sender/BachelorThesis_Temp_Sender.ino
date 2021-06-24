@@ -30,7 +30,7 @@ String freenetArduinoUploadURI = "";
 String freenetArduinoReceiverURI = "";
 String freenetPrivReceiverURI = "";
 
-int requestCounter = 0;
+int requestCounter = 2;
 int responseCounter = 0;
 
 //Variables for ECDH
@@ -135,7 +135,7 @@ void loop() {
   }else{
     fcpClient.connectClient();
   }
-  delay(1000);
+  delay(5000);
   Serial.println("Repeat");
 }
 
@@ -152,8 +152,8 @@ void getNewConnectionRequest(){
 void sendPublicKeySender(){
   GenerateECDHKeys();
   rbase64.encode(pubKey, sizeof(pubKey));
-  String pubBase64 = rbase64.result();
-  fcpClient.doClientPut(freenetReceiverURI  + responseCounter, "TempArduino", "Pub:"+String(pubBase64.length()), pubBase64);
+  String pubBase64 = "Pub:"+(String)rbase64.result();
+  fcpClient.doClientPut(freenetReceiverURI  + responseCounter, "TempArduino",  String(pubBase64.length()), pubBase64);
   delay(500);
   String data = doReadFcp();
   sendPubKeySender = false;
@@ -197,8 +197,8 @@ void sendNewUriCrypted(){
   aes256_enc_single(sharedSecret, char_array);
   
   rbase64.encode((uint8_t*)char_array, sizeof(char_array));
-  String pubBase64 = rbase64.result();
-  fcpClient.doClientPut(freenetReceiverURI  + responseCounter, "TempArduino", "PrvURI:" + String(pubBase64.length()), pubBase64);
+  String pubBase64 = "PrvURI:" + (String)rbase64.result();
+  fcpClient.doClientPut(freenetReceiverURI  + responseCounter, "TempArduino", String(pubBase64.length()), pubBase64);
   delay(500);
   String data = doReadFcp();
   sendNewUriEncrypted = false;
