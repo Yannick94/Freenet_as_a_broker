@@ -22,6 +22,7 @@ DHT dht(DHTPIN, DHTTYPE); //// Initialize DHT sensor for normal 16mhz Arduino
 
 //Variables for Freenet
 IPAddress server(192,168,1,56);
+String identifier = "TempSensor";
 String freenetRequestUSKURI = "USK@jPUqN3uiMLil1jOHssBzgUZTlKa7QJ6QdC7twajT83Q,db8UCXm-utxTMevNn4KVkwEpVnsFO~6HKCDFjl7M9qA,AQACAAE/temp/";
 String freenetUploadUSKURI = "USK@UKFP9LwXBm1G8CAM~9QuZ~WXEVWvtV6voNQmRjeOHSg,db8UCXm-utxTMevNn4KVkwEpVnsFO~6HKCDFjl7M9qA,AQECAAE/temp/";
 String freenetReceiverURI = "";
@@ -140,7 +141,7 @@ void loop() {
 }
 
 void getNewConnectionRequest(){
-  String data = fcpClient.doClientGet(freenetRequestUSKURI + requestCounter, "ArduinoTemp");
+  String data = fcpClient.doClientGet(freenetRequestUSKURI + requestCounter, identifier);
   freenetReceiverURI = data.substring(data.indexOf("Uri:")).substring(4);
   if(freenetReceiverURI != ""){
     getReceiverUri = false;
@@ -153,7 +154,7 @@ void sendPublicKeySender(){
   GenerateECDHKeys();
   rbase64.encode(pubKey, sizeof(pubKey));
   String pubBase64 = "Pub:"+(String)rbase64.result();
-  fcpClient.doClientPut(freenetReceiverURI  + responseCounter, "TempArduino",  String(pubBase64.length()), pubBase64);
+  fcpClient.doClientPut(freenetReceiverURI  + responseCounter, identifier,  String(pubBase64.length()), pubBase64);
   delay(500);
   String data = doReadFcp();
   sendPubKeySender = false;
@@ -162,7 +163,7 @@ void sendPublicKeySender(){
 }
 
 void getPublicKeyReceiver(){
-  String data = fcpClient.doClientGet(freenetRequestUSKURI + requestCounter, "ArduinoTemp");
+  String data = fcpClient.doClientGet(freenetRequestUSKURI + requestCounter, identifier);
   String base64Key = data.substring(data.indexOf("Pub:")).substring(4);
   if(base64Key != ""){
     rbase64.decode(base64Key);
@@ -177,7 +178,7 @@ void getPublicKeyReceiver(){
 }
 
 void getNewFreenetURI(){
-  String data = fcpClient.doGenerateSSK("ArduinoTemp");
+  String data = fcpClient.doGenerateSSK(identifier);
   if(data != ""){
     freenetArduinoUploadURI = getValue(data, '\n', 2);
     freenetArduinoReceiverURI = getValue(data, '\n', 3);
@@ -198,7 +199,7 @@ void sendNewUriCrypted(){
   
   rbase64.encode((uint8_t*)char_array, sizeof(char_array));
   String pubBase64 = "PrvURI:" + (String)rbase64.result();
-  fcpClient.doClientPut(freenetReceiverURI  + responseCounter, "TempArduino", String(pubBase64.length()), pubBase64);
+  fcpClient.doClientPut(freenetReceiverURI  + responseCounter, identifier, String(pubBase64.length()), pubBase64);
   delay(500);
   String data = doReadFcp();
   sendNewUriEncrypted = false;
@@ -208,7 +209,7 @@ void sendNewUriCrypted(){
 
 void receiveNewUriCrypted(){
   requestCounter = 0;
-  String data = fcpClient.doClientGet(freenetArduinoReceiverURI + requestCounter, "ArduinoTemp");
+  String data = fcpClient.doClientGet(freenetArduinoReceiverURI + requestCounter, identifier);
   String base64Key = data.substring(data.indexOf("PrvURI:")).substring(7);
   if(base64Key != ""){
     rbase64.decode(base64Key);
@@ -236,7 +237,7 @@ void sendSensorDataCrypted(){
   
   rbase64.encode((uint8_t*)char_array, sizeof(char_array));
   String pubBase64 = rbase64.result();
-  fcpClient.doClientPut(freenetPrivReceiverURI  + responseCounter, "TempArduino", String(pubBase64.length()), pubBase64);
+  fcpClient.doClientPut(freenetPrivReceiverURI  + responseCounter, identifier, String(pubBase64.length()), pubBase64);
   delay(500);
   String data = doReadFcp();
   didReceiveSensorData = false;
@@ -244,7 +245,7 @@ void sendSensorDataCrypted(){
 }
 
 void checkForReceiveConfirmation(){
-  String data = fcpClient.doClientGet(freenetArduinoReceiverURI + requestCounter, "ArduinoTemp");
+  String data = fcpClient.doClientGet(freenetArduinoReceiverURI + requestCounter, identifier);
   if(data != ""){
     rbase64.decode(data);
     String receive = rbase64.result();
